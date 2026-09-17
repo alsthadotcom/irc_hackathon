@@ -38,12 +38,12 @@ window.setAuthMode = (mode) => {
   currentAuthMode = mode;
   document.getElementById('authError').classList.remove('show');
   if(mode === 'SIGNUP') {
-    document.getElementById('tabSignup').className = 'btn btn-dark';
-    document.getElementById('tabLogin').className = 'btn btn-ghost';
+    document.getElementById('tabSignup').className = 'btn btn-navy';
+    document.getElementById('tabLogin').className = 'btn btn-outline';
     document.getElementById('authSubmitBtn').textContent = 'Sign Up';
   } else {
-    document.getElementById('tabSignup').className = 'btn btn-ghost';
-    document.getElementById('tabLogin').className = 'btn btn-dark';
+    document.getElementById('tabSignup').className = 'btn btn-outline';
+    document.getElementById('tabLogin').className = 'btn btn-navy';
     document.getElementById('authSubmitBtn').textContent = 'Log In';
   }
 };
@@ -137,21 +137,21 @@ function updateHeader(user) {
   if(user && user.emailVerified) {
     navBtn.outerHTML = `
       <div id="navSignInBtn" class="chip" style="padding: 4px 16px 4px 4px; gap: 12px; cursor: default; user-select: none;">
-        <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg, var(--brand), var(--brand-d));color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;box-shadow: 0 0 14px rgba(47,224,141,0.25); border: 1px solid rgba(47,224,141,0.2);">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;box-shadow: 3px 3px 0 var(--yellow); border: 2px solid var(--ink);">
           ${user.email.substring(0,2).toUpperCase()}
         </div>
-        <button onclick="handleSignOut()" style="background:transparent;border:none;color:var(--muted);font-size:13.5px;font-weight:800;cursor:pointer;transition:color .2s;font-family:inherit;padding:0;" onmouseover="this.style.color='var(--mint)'" onmouseout="this.style.color='var(--muted)'">
+        <button onclick="handleSignOut()" style="background:transparent;border:none;color:var(--ink);font-size:13.5px;font-weight:800;cursor:pointer;transition:color .2s;font-family:inherit;padding:0;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--ink)'">
           Sign Out
         </button>
       </div>
     `;
   } else {
     if (navBtn.tagName !== 'BUTTON') {
-      navBtn.outerHTML = '<button class="btn btn-ghost" id="navSignInBtn" onclick="openAuth()">Sign In</button>';
+      navBtn.outerHTML = '<button class="btn btn-outline" id="navSignInBtn" onclick="openAuth()">Sign In</button>';
     } else {
       navBtn.innerHTML = 'Sign In';
       navBtn.onclick = window.openAuth;
-      navBtn.className = 'btn btn-ghost';
+      navBtn.className = 'btn btn-outline';
     }
   }
 }
