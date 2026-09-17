@@ -1,17 +1,833 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Islington Research & Opportunity Platform | IRC</title>
-    <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  </head>
-  <body class="bg-slate-950 text-slate-100 antialiased selection:bg-indigo-500 selection:text-white">
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ING RND — Frontier Research Opportunities</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B120E; --bg2:#0E1A13; --surface:#10231A; --surface2:#0C1D15;
+    --line:#1E3A2C; --line2:#16281F;
+    --mint:#2FE08D; --mint-soft:rgba(47,224,141,.12); --mint-line:rgba(47,224,141,.35);
+    --brand:#0E7C5B; --brand-d:#0A5F45;
+    --text:#E9F5EE; --muted:#93AFA1; --muted2:#6E8C7C;
+    color-scheme:dark;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Manrope',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+  h1,h2,h3,.brand-name,.stat b,.ghost,.ticker span,.foot-word{font-family:'Syne','Manrope',sans-serif}
+  button{font-family:inherit;cursor:pointer}
+  a{color:inherit}
+  ::selection{background:var(--mint);color:#08130D}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{background:#1E3A2C;border-radius:99px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--mint)}
+  body.modal-open{overflow:hidden}
+
+  /* ambient background glows */
+  .ambient{position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:
+      radial-gradient(600px 420px at 12% -5%, rgba(47,224,141,.09), transparent 70%),
+      radial-gradient(700px 500px at 95% 20%, rgba(14,124,91,.16), transparent 70%),
+      radial-gradient(520px 420px at 80% 95%, rgba(47,224,141,.05), transparent 70%);}
+  .grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  /* ============ HEADER ============ */
+  .header{position:sticky;top:0;z-index:60;background:rgba(11,18,14,.78);backdrop-filter:blur(14px);border-bottom:1px solid var(--line2)}
+  .header-inner{max-width:1280px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 26px}
+  .logo{display:flex;align-items:center;gap:11px;text-decoration:none}
+  .logo-mark{width:40px;height:40px;border-radius:13px;background:linear-gradient(135deg,var(--brand),var(--brand-d));display:grid;place-items:center;color:#EAFFF5;box-shadow:0 0 22px rgba(47,224,141,.28), inset 0 1px 0 rgba(255,255,255,.15);transition:.25s}
+  .logo:hover .logo-mark{box-shadow:0 0 32px rgba(47,224,141,.5);transform:rotate(-5deg)}
+  .logo-mark svg{width:19px;height:19px}
+  .brand-name{font-weight:800;font-size:18px;letter-spacing:.4px;color:#fff}
+  .brand-name b{color:var(--mint)}
+  .nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+  .nav::-webkit-scrollbar{display:none}
+  .nav a{padding:9px 15px;border-radius:999px;text-decoration:none;font-size:14px;font-weight:600;color:var(--muted);white-space:nowrap;transition:.2s}
+  .nav a:hover{color:var(--mint);background:var(--mint-soft)}
+
+  .btn{border:none;border-radius:999px;padding:12px 22px;font-weight:800;font-size:14px;transition:.2s;display:inline-flex;align-items:center;gap:9px;text-decoration:none}
+  .btn svg{width:15px;height:15px}
+  .btn-mint{background:var(--mint);color:#08130D;box-shadow:0 0 26px rgba(47,224,141,.35)}
+  .btn-mint:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(47,224,141,.55)}
+  .btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--mint);color:var(--mint)}
+  .btn-dark{background:#0B1710;color:var(--text);border:1.5px solid var(--line)}
+  .btn-dark:hover{border-color:var(--mint)}
+
+  /* ============ HERO ============ */
+  .hero{max-width:1280px;margin:0 auto;padding:64px 26px 30px;display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:center}
+  .hero-badge{display:inline-flex;align-items:center;gap:9px;background:var(--mint-soft);border:1px solid var(--mint-line);color:var(--mint);padding:8px 16px;border-radius:999px;font-size:13px;font-weight:700}
+  .hero-badge i{width:7px;height:7px;border-radius:50%;background:var(--mint);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(47,224,141,.5)}50%{opacity:.6;box-shadow:0 0 0 6px rgba(47,224,141,0)}}
+  .hero h1{font-size:clamp(42px,5.6vw,74px);font-weight:800;line-height:1.02;letter-spacing:-2px;margin-top:22px}
+  .grad{background:linear-gradient(92deg,var(--mint),#A8F0CF 70%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero .sub{margin-top:20px;max-width:520px;color:var(--muted);font-size:16px;line-height:1.7}
+  .hero-cta{margin-top:30px;display:flex;gap:12px;flex-wrap:wrap}
+  .stats{display:flex;gap:42px;margin-top:48px;flex-wrap:wrap}
+  .stat b{font-size:30px;font-weight:800;color:#fff;display:block;letter-spacing:-1px}
+  .stat b em{color:var(--mint);font-style:normal}
+  .stat span{font-size:12.5px;color:var(--muted2);font-weight:600;letter-spacing:.4px;text-transform:uppercase}
+
+  /* orbit visual */
+  .orbit-wrap{display:grid;place-items:center}
+  .orbit{position:relative;width:min(430px,86vw);aspect-ratio:1}
+  .orbit::before{content:'';position:absolute;inset:18%;background:radial-gradient(closest-side,rgba(47,224,141,.18),transparent 70%);border-radius:50%;filter:blur(8px)}
+  .ring{position:absolute;border-radius:50%;border:1.5px dashed #2C5540;animation:spin 46s linear infinite}
+  .ring.r2{inset:15%;animation-duration:30s;animation-direction:reverse;border-color:#24483A}
+  .ring.r3{inset:31%;border-style:solid;border-color:var(--line);animation:none}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .core{position:absolute;inset:36.5%;border-radius:30px;background:linear-gradient(135deg,#0E7C5B,#083E2E);display:grid;place-items:center;color:#EAFFF5;box-shadow:0 0 70px rgba(47,224,141,.3), inset 0 1px 0 rgba(255,255,255,.18);z-index:2}
+  .core svg{width:34%;height:34%}
+  .f-chip{position:absolute;z-index:3;padding:9px 15px;border-radius:14px;font-weight:800;font-size:13px;color:#14231D;display:flex;align-items:center;gap:7px;box-shadow:0 14px 30px -12px rgba(0,0,0,.65);animation:bob 5.5s ease-in-out infinite;white-space:nowrap}
+  .f-chip i{width:8px;height:8px;border-radius:50%}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+  .fc1{top:3%;left:50%;background:#DFF2D0;animation-delay:.2s}
+  .fc2{top:44%;right:-3%;background:#A6E6C4;animation-delay:1.4s;animation-duration:6.5s}
+  .fc3{bottom:1%;left:16%;background:#C4EEDF;animation-delay:.8s;animation-duration:6s}
+  .fc4{top:22%;left:-5%;background:#BDEBD2;animation-delay:2s;animation-duration:7s}
+
+  /* ============ TICKER ============ */
+  .ticker{border-block:1px solid var(--line2);background:var(--bg2);overflow:hidden;margin-top:26px}
+  .ticker-track{display:flex;width:max-content;animation:scrollX 30s linear infinite}
+  .ticker-group{display:flex;align-items:center;gap:52px;padding:16px 26px}
+  .ticker span{font-weight:800;font-size:21px;letter-spacing:.5px;white-space:nowrap;color:#DFF2E7}
+  .ticker span.hollow{color:transparent;-webkit-text-stroke:1px #3B6B52}
+  .ticker .sep{color:var(--mint);font-size:14px}
+  @keyframes scrollX{to{transform:translateX(-50%)}}
+
+  /* ============ CONTROLS ============ */
+  .opps{max-width:1280px;margin:0 auto;padding:46px 26px 0}
+  .toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+  .search{position:relative;flex:1;min-width:230px;max-width:440px}
+  .search svg{position:absolute;left:17px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted2)}
+  .search input{width:100%;padding:13px 18px 13px 46px;border-radius:999px;border:1.5px solid var(--line);font:inherit;font-size:14px;background:var(--surface);color:var(--text);transition:.2s}
+  .search input::placeholder{color:var(--muted2)}
+  .search input:focus{outline:none;border-color:var(--mint);box-shadow:0 0 0 3px rgba(47,224,141,.15)}
+  .seg{display:flex;background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:4px;gap:4px}
+  .seg button{border:none;background:transparent;padding:8px 17px;border-radius:999px;font-size:13.5px;font-weight:800;color:var(--muted);transition:.2s}
+  .seg button.active{background:var(--mint);color:#08130D}
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .chip{display:inline-flex;align-items:center;gap:9px;background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:6px 17px 6px 7px;font-weight:700;font-size:13.5px;color:var(--muted);transition:.2s}
+  .chip .ic{width:30px;height:30px;border-radius:50%;background:var(--surface2);display:grid;place-items:center;color:var(--mint);transition:.2s}
+  .chip .ic svg{width:14px;height:14px}
+  .chip:hover{border-color:var(--mint-line);color:var(--text)}
+  .chip.active{background:var(--mint);border-color:var(--mint);color:#08130D}
+  .chip.active .ic{background:rgba(8,19,13,.14);color:#08130D}
+
+  /* ============ SECTIONS & CARDS ============ */
+  .opp-section{margin-top:64px}
+  .opp-head{position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap}
+  .ghost{position:absolute;left:-6px;top:-58px;font-size:clamp(70px,9vw,116px);font-weight:800;line-height:1;color:transparent;-webkit-text-stroke:1.5px #20402F;z-index:0;pointer-events:none;user-select:none}
+  .opp-tag{position:relative;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--mint);background:var(--mint-soft);border:1px solid var(--mint-line);padding:5px 13px;border-radius:999px;display:inline-block;margin-bottom:12px}
+  .opp-head h2{position:relative;font-size:30px;font-weight:800;letter-spacing:-.6px;color:#fff}
+  .opp-sub{position:relative;color:var(--muted);font-size:14.5px;margin-top:7px;max-width:560px;line-height:1.6}
+  .count-pill{background:var(--surface);border:1.5px solid var(--line);color:var(--mint);font-weight:800;font-size:13px;padding:9px 16px;border-radius:999px;white-space:nowrap}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+  .empty{border:1.5px dashed #234636;border-radius:22px;padding:46px 24px;text-align:center;color:var(--muted2);font-size:14.5px;display:none}
+
+  .card{border-radius:24px;padding:20px;min-height:212px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;border:none;animation:cardIn .55s cubic-bezier(.2,.7,.3,1) backwards;transition:transform .22s,box-shadow .22s;position:relative}
+  @keyframes cardIn{from{opacity:0;transform:translateY(16px) scale(.98)}}
+  .card:hover,.card:focus-visible{transform:translateY(-6px);box-shadow:0 24px 48px -20px rgba(0,0,0,.75), 0 20px 60px -26px var(--gl,rgba(47,224,141,.35));outline:none}
+  .card-top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.94);border:1px solid rgba(23,37,31,.09);border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:800;color:#17251F}
+  .pill svg{width:13px;height:13px}
+  .dot{width:7px;height:7px;border-radius:50%;background:#0E7C5B;display:inline-block}
+  .st-done svg{color:#5B6B64}
+  .pill-rating svg{color:#0A5F45}
+  .pill-top svg{color:#0E7C5B}
+  .card-title{font-size:20px;line-height:1.28;font-weight:800;color:#14231D;letter-spacing:-.2px;margin:14px 0;font-family:'Manrope',sans-serif}
+  .card-bottom{display:flex;align-items:center;gap:8px}
+  .avatars{display:flex}
+  .avatar{width:30px;height:30px;border-radius:50%;border:2px solid #fff;color:#fff;font-size:10.5px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-left:-9px;flex-shrink:0}
+  .avatar:first-child{margin-left:0}
+  .avatar-more{background:#14231D}
+  .pcount{font-size:13px;font-weight:700;color:#2A4034;white-space:nowrap}
+  .spacer{flex:1}
+  .card-arrow{width:36px;height:36px;border-radius:50%;background:#0B1710;color:#EAFFF5;display:flex;align-items:center;justify-content:center;transition:.22s;flex-shrink:0}
+  .card-arrow svg{width:16px;height:16px}
+  .card:hover .card-arrow{transform:translateX(4px) scale(1.06);background:var(--brand);color:#fff}
+
+  /* ============ CTA BAND ============ */
+  .cta-band{max-width:1280px;margin:70px auto 0;padding:0 26px}
+  .cta-inner{border-radius:30px;padding:52px 54px;background:linear-gradient(120deg,#0E7C5B,#07382A);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap}
+  .cta-inner::before{content:'';position:absolute;width:420px;height:420px;border-radius:50%;border:60px solid rgba(255,255,255,.06);right:-140px;top:-160px}
+  .cta-inner h3{font-size:clamp(24px,3vw,34px);font-weight:800;letter-spacing:-.6px;color:#fff;max-width:520px;line-height:1.2}
+  .cta-inner p{color:rgba(255,255,255,.75);margin-top:10px;max-width:460px;line-height:1.6}
+  .cta-inner .btn{position:relative;z-index:1}
+
+  /* ============ FOOTER ============ */
+  .footer{max-width:1280px;margin:0 auto;padding:70px 26px 34px;text-align:center}
+  .foot-word{font-size:clamp(58px,13vw,150px);font-weight:800;letter-spacing:2px;line-height:1;color:transparent;-webkit-text-stroke:1.5px #234636;user-select:none;transition:.4s}
+  .foot-word:hover{-webkit-text-stroke-color:var(--mint);text-shadow:0 0 60px rgba(47,224,141,.15)}
+  .foot-row{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:34px;padding-top:22px;border-top:1px solid var(--line2);font-size:13.5px;color:var(--muted2)}
+  .foot-row .links{display:flex;gap:20px}
+  .foot-row a{text-decoration:none;font-weight:700;transition:.2s}
+  .foot-row a:hover{color:var(--mint)}
+
+  /* ============ MODALS ============ */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(4,10,7,.72);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s}
+  .modal-backdrop.show{opacity:1;pointer-events:auto}
+  .modal{background:var(--bg2);border:1px solid var(--line);border-radius:28px;max-width:780px;width:100%;max-height:88vh;overflow:auto;transform:translateY(18px) scale(.98);transition:transform .25s;box-shadow:0 40px 100px -30px rgba(0,0,0,.8)}
+  .modal-backdrop.show .modal{transform:none}
+  .modal.small{max-width:680px}
+  .modal-banner{padding:30px 34px 26px;position:relative;border-radius:28px 28px 0 0}
+  .modal-title{font-size:26px;font-weight:800;letter-spacing:-.4px;margin-top:16px;max-width:85%;line-height:1.22;color:#14231D}
+  .modal-close{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.92);border:none;display:flex;align-items:center;justify-content:center;color:#14231D;transition:.2s}
+  .modal-close:hover{background:#0B1710;color:#fff}
+  .modal-close svg{width:16px;height:16px}
+  .modal-body{padding:24px 34px 8px}
+  .meta-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+  .meta-chip{display:inline-flex;gap:8px;align-items:center;background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:700;color:var(--text)}
+  .meta-chip svg{width:14px;height:14px;color:var(--mint)}
+  .section-label{font-size:11.5px;letter-spacing:2px;font-weight:800;color:var(--muted2);text-transform:uppercase;margin:26px 0 12px}
+  .modal-desc{color:#C4D9CC;line-height:1.75;font-size:15px;white-space:pre-line}
+  .person{display:flex;align-items:center;gap:14px;padding:13px 15px;background:var(--surface2);border:1.5px solid var(--line);border-radius:18px;margin-bottom:10px;flex-wrap:wrap;list-style:none}
+  .avatar.big{width:44px;height:44px;font-size:14px;margin:0}
+  .person-info{flex:1;min-width:170px}
+  .person-info strong{display:block;font-size:15px;color:#fff}
+  .person-info span{font-size:13px;color:var(--muted)}
+  .person-links{display:flex;gap:8px;flex-wrap:wrap}
+  .chip-link{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;font-size:12.5px;font-weight:800;text-decoration:none;border:1.5px solid var(--line);color:var(--text);background:var(--surface);transition:.2s}
+  .chip-link svg{width:13px;height:13px}
+  .chip-link:hover{border-color:var(--mint);color:var(--mint);background:var(--mint-soft)}
+  .modal-footer{display:flex;gap:12px;justify-content:flex-end;padding:14px 34px 30px;flex-wrap:wrap}
+
+  /* form */
+  .form{padding:24px 34px 30px}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field.full{grid-column:1/-1}
+  .field label{font-size:13px;font-weight:800;color:var(--muted)}
+  .field input,.field select,.field textarea{border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;font:inherit;font-size:14px;background:var(--surface2);color:var(--text);transition:.2s;width:100%}
+  .field textarea{min-height:110px;resize:vertical}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--mint);box-shadow:0 0 0 3px rgba(47,224,141,.14)}
+  .person-row{display:grid;grid-template-columns:1.1fr 1.25fr 1fr auto;gap:8px;margin-bottom:8px}
+  .person-row input{border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;font:inherit;font-size:13.5px;background:var(--surface2);color:var(--text);min-width:0}
+  .person-row input::placeholder{color:var(--muted2)}
+  .person-row input:focus{outline:none;border-color:var(--mint)}
+  .remove-btn{width:42px;border-radius:14px;border:1.5px solid rgba(224,80,90,.35);background:rgba(224,80,90,.12);color:#F0919B;font-size:17px;transition:.2s}
+  .remove-btn:hover{background:#C74A55;color:#fff;border-color:#C74A55}
+  .form-error{display:none;background:rgba(224,80,90,.12);border:1.5px solid rgba(224,80,90,.35);color:#F5A9B1;padding:11px 15px;border-radius:14px;font-size:13.5px;font-weight:700;margin-top:14px}
+  .form-error.show{display:block}
+
+  /* toast */
+  .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,90px);background:var(--mint);color:#08130D;padding:15px 26px;border-radius:999px;font-size:14px;font-weight:800;box-shadow:0 16px 40px -10px rgba(47,224,141,.5);opacity:0;transition:.35s;z-index:300;max-width:92vw;text-align:center}
+  .toast.show{transform:translate(-50%,0);opacity:1}
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:1020px){
+    .hero{grid-template-columns:1fr;padding-top:44px}
+    .orbit{margin-top:10px}
+    .stats{gap:28px}
+  }
+  @media (max-width:720px){
+    .nav{display:none}
+    .hero h1{letter-spacing:-1px}
+    .modal-banner,.modal-body,.form,.modal-footer{padding-left:22px;padding-right:22px}
+    .modal-title{max-width:100%}
+    .form-grid{grid-template-columns:1fr}
+    .person-row{grid-template-columns:1fr}
+    .remove-btn{width:100%}
+    .cta-inner{padding:38px 28px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  }
+</style>
+</head>
+<body id="top">
+<div class="ambient"></div><div class="grain"></div>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+  <div class="header-inner">
+    <a class="logo" href="#top" aria-label="ING RND home">
+      <span class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6l-5.2 8.7A2 2 0 0 0 6.5 21h11a2 2 0 0 0 1.7-3.3L14 9V3"/><path d="M7.5 15h9"/></svg>
+      </span>
+      <span class="brand-name">ING <b>RND</b></span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="#opportunities">Opportunities</a>
+      <a href="#section-ing">ING track</a>
+      <a href="#section-global">Global track</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <button class="btn btn-mint" onclick="openRegister()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      Register project
+    </button>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div>
+    <span class="hero-badge"><i></i><span id="openNow">…</span> open projects right now</span>
+    <h1>Find your next <span class="grad">frontier research</span> project.</h1>
+    <p class="sub">ING RND connects researchers and engineers across our network and the wider world. Browse open and completed projects, meet the teams behind them, or publish your own initiative.</p>
+    <div class="hero-cta">
+      <a class="btn btn-mint" href="#opportunities">Explore projects
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 13l-7 7-7-7"/></svg></a>
+      <button class="btn btn-ghost" onclick="openRegister()">Register your project</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><b><span data-count="120">0</span><em>+</em></b><span>Researchers</span></div>
+      <div class="stat"><b><span data-count="18">0</span></b><span>Countries</span></div>
+      <div class="stat"><b><span data-count="5">0</span></b><span>Sectors</span></div>
+      <div class="stat"><b><span data-count="60">0</span><em>+</em></b><span>Releases</span></div>
+    </div>
+  </div>
+  <div class="orbit-wrap">
+    <div class="orbit" aria-hidden="true">
+      <div class="ring"></div><div class="ring r2"></div><div class="ring r3"></div>
+      <div class="core">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6l-5.2 8.7A2 2 0 0 0 6.5 21h11a2 2 0 0 0 1.7-3.3L14 9V3"/><path d="M7.5 15h9"/></svg>
+      </div>
+      <span class="f-chip fc1"><i style="background:#0A5F45"></i>AI Safety</span>
+      <span class="f-chip fc2"><i style="background:#0E7C5B"></i>Interpretability</span>
+      <span class="f-chip fc3"><i style="background:#1E9E6E"></i>Governance</span>
+      <span class="f-chip fc4"><i style="background:#35B47F"></i>Evaluations</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TICKER ================= -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <div class="ticker-group">
+      <span>AI Safety</span><span class="sep">✦</span><span class="hollow">Interpretability</span><span class="sep">✦</span>
+      <span>Governance</span><span class="sep">✦</span><span class="hollow">Robustness</span><span class="sep">✦</span>
+      <span>Evaluations</span><span class="sep">✦</span><span class="hollow">Open Science</span><span class="sep">✦</span>
+    </div>
+    <div class="ticker-group">
+      <span>AI Safety</span><span class="sep">✦</span><span class="hollow">Interpretability</span><span class="sep">✦</span>
+      <span>Governance</span><span class="sep">✦</span><span class="hollow">Robustness</span><span class="sep">✦</span>
+      <span>Evaluations</span><span class="sep">✦</span><span class="hollow">Open Science</span><span class="sep">✦</span>
+    </div>
+  </div>
+</div>
+
+<!-- ================= OPPORTUNITIES ================= -->
+<main class="opps" id="opportunities">
+  <div class="toolbar">
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input id="searchInput" type="text" placeholder="Search projects…" aria-label="Search projects">
+    </div>
+    <div class="seg" id="statusSeg" role="group" aria-label="Filter by status">
+      <button data-status="All" class="active">All</button>
+      <button data-status="Open">Open</button>
+      <button data-status="Completed">Completed</button>
+    </div>
+  </div>
+  <div class="chips" id="sectorChips" aria-label="Filter by sector"></div>
+
+  <section class="opp-section" id="section-ing">
+    <div class="opp-head">
+      <span class="ghost" aria-hidden="true">01</span>
+      <div>
+        <span class="opp-tag">Track 01 · Internal</span>
+        <h2>ING Opportunities</h2>
+        <p class="opp-sub">Projects run with ING member organisations — internal teams can join directly through the network.</p>
+      </div>
+      <span class="count-pill" id="count-ing"></span>
+    </div>
+    <div class="grid" id="grid-ing"></div>
+    <div class="empty" id="empty-ing">No ING projects match your current filters.</div>
+  </section>
+
+  <section class="opp-section" id="section-global">
+    <div class="opp-head">
+      <span class="ghost" aria-hidden="true">02</span>
+      <div>
+        <span class="opp-tag">Track 02 · Worldwide</span>
+        <h2>Global Opportunities</h2>
+        <p class="opp-sub">Open collaborations welcoming participants from industry, academia and civil society worldwide.</p>
+      </div>
+      <span class="count-pill" id="count-global"></span>
+    </div>
+    <div class="grid" id="grid-global"></div>
+    <div class="empty" id="empty-global">No global projects match your current filters.</div>
+  </section>
+</main>
+
+<!-- ================= CTA BAND ================= -->
+<div class="cta-band" id="contact">
+  <div class="cta-inner">
+    <div>
+      <h3>Have a project the network should know about?</h3>
+      <p>Publish it on ING RND in under a minute — add your team's contacts and let collaborators find you.</p>
+    </div>
+    <button class="btn btn-mint" onclick="openRegister()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      Register a project
+    </button>
+  </div>
+</div>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  <div class="foot-word" aria-hidden="true">ING RND</div>
+  <div class="foot-row">
+    <span>© 2025 ING RND — demo build. All project data is fictional.</span>
+    <span class="links">
+      <a href="#top">Back to top</a>
+      <a href="#opportunities">Projects</a>
+      <a href="mailto:hello@ingrnd.example">hello@ingrnd.example</a>
+    </span>
+  </div>
+</footer>
+
+<!-- ================= PROJECT MODAL ================= -->
+<div class="modal-backdrop" id="projectModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-banner" id="pmBanner">
+      <button class="modal-close" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      <div id="pmPills" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+      <h2 class="modal-title" id="pmTitle"></h2>
+    </div>
+    <div class="modal-body">
+      <div class="meta-row" id="pmMeta"></div>
+      <div class="section-label">About the project</div>
+      <p class="modal-desc" id="pmDesc"></p>
+      <div class="section-label" id="pmTeamLabel">Participants & contact info</div>
+      <ul style="list-style:none" id="pmParticipants"></ul>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-dark" data-close>Close</button>
+      <a class="btn btn-mint" id="pmContact" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>
+        <span id="pmContactLabel">Express interest</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ================= REGISTER MODAL ================= -->
+<div class="modal-backdrop" id="registerModal" role="dialog" aria-modal="true">
+  <div class="modal small">
+    <div class="modal-banner" style="background:linear-gradient(120deg,#BDEBD2,#DFF2D0)">
+      <button class="modal-close" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      <span class="pill" style="margin-bottom:10px;display:inline-flex">✦ New initiative</span>
+      <h2 class="modal-title" style="margin-top:4px">Register your project</h2>
+      <p style="margin-top:10px;font-size:14px;color:#2A4034;max-width:90%;font-weight:600">Fill in the details below — your project will instantly appear in the selected opportunity track.</p>
+    </div>
+    <form class="form" id="registerForm" novalidate>
+      <div class="form-grid">
+        <div class="field full">
+          <label for="rf-title">Project title *</label>
+          <input id="rf-title" type="text" placeholder="e.g. Red-Teaming Frontier Models at Scale">
+        </div>
+        <div class="field">
+          <label for="rf-sector">Sector *</label>
+          <select id="rf-sector">
+            <option>AI Safety</option><option>Interpretability</option><option>Governance</option>
+            <option>Robustness</option><option>Evaluations</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="rf-section">Opportunity track *</label>
+          <select id="rf-section"><option value="ing">ING Opportunities</option><option value="global">Global Opportunities</option></select>
+        </div>
+        <div class="field">
+          <label for="rf-status">Status</label>
+          <select id="rf-status"><option>Open</option><option>Completed</option></select>
+        </div>
+        <div class="field">
+          <label for="rf-rating">Community rating</label>
+          <input id="rf-rating" type="text" placeholder="e.g. 4.8 (optional)">
+        </div>
+        <div class="field">
+          <label for="rf-timeline">Timeline</label>
+          <input id="rf-timeline" type="text" placeholder="e.g. Mar – Sep 2025">
+        </div>
+        <div class="field">
+          <label for="rf-location">Location</label>
+          <input id="rf-location" type="text" placeholder="e.g. Remote / Amsterdam">
+        </div>
+        <div class="field full">
+          <label for="rf-desc">Description *</label>
+          <textarea id="rf-desc" placeholder="What does the project aim to achieve? Who should join?"></textarea>
+        </div>
+        <div class="field full">
+          <label>Participants & contact info *</label>
+          <div id="rf-people"></div>
+          <button type="button" class="btn btn-dark" style="align-self:flex-start;margin-top:6px" onclick="addPersonRow()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            Add participant
+          </button>
+        </div>
+      </div>
+      <div class="form-error" id="rf-error"></div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:22px;flex-wrap:wrap">
+        <button type="button" class="btn btn-dark" data-close>Cancel</button>
+        <button type="submit" class="btn btn-mint">Publish project</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= ICONS ================= */
+const S = 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+const ICONS = {
+  grid:`<svg viewBox="0 0 24 24" ${S}><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>`,
+  shield:`<svg viewBox="0 0 24 24" ${S}><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/></svg>`,
+  eye:`<svg viewBox="0 0 24 24" ${S}><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="3"/></svg>`,
+  scale:`<svg viewBox="0 0 24 24" ${S}><path d="M12 3v18M8 21h8M5 6h14M5 6L2 12a3 3 0 0 0 6 0L5 6M19 6l3 6a3 3 0 0 1-6 0l3-6"/></svg>`,
+  layers:`<svg viewBox="0 0 24 24" ${S}><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg>`,
+  gauge:`<svg viewBox="0 0 24 24" ${S}><path d="M5 19a9 9 0 1 1 14 0"/><path d="M12 13l3.5-3.5"/></svg>`,
+  star:`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
+  medal:`<svg viewBox="0 0 24 24" ${S}><circle cx="12" cy="8" r="6"/><path d="M8.2 13.9L7 22l5-3 5 3-1.2-8.1"/></svg>`,
+  check:`<svg viewBox="0 0 24 24" ${S} stroke-width="2.6"><path d="M20 6L9 17l-5-5"/></svg>`,
+  users:`<svg viewBox="0 0 24 24" ${S}><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  mail:`<svg viewBox="0 0 24 24" ${S}><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>`,
+  github:`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>`,
+  arrow:`<svg viewBox="0 0 24 24" ${S} stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`,
+  calendar:`<svg viewBox="0 0 24 24" ${S}><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`,
+  pin:`<svg viewBox="0 0 24 24" ${S}><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>`
+};
+const SECTOR_ICON = {'AI Safety':'shield','Interpretability':'eye','Governance':'scale','Robustness':'layers','Evaluations':'gauge'};
+
+/* ================= DATA ================= */
+const P = (id,section,title,sector,status,color,rating,timeline,location,desc,participants)=>({id,section,title,sector,status,color,rating,timeline,location,desc,participants});
+const PERSON = (name,role,email,github)=>({name,role,email,github});
+
+/* All-green card shades */
+const G = {
+  palest : '#E7F8EE',
+  mintLt : '#D3F2E0',
+  mint   : '#BDEBD2',
+  fresh  : '#A6E6C4',
+  sea    : '#8FDDB4',
+  sage   : '#DFF2D0',
+  olive  : '#CBEBC0',
+  teal   : '#C4EEDF'
+};
+
+let projects = [
+  /* ---------- ING ---------- */
+  P('i1','ing','Societal Resilience to Advanced AI','Governance','Open',G.sage,'4.8','Jan – Dec 2025','Amsterdam · Hybrid',
+`This initiative brings together policy, safety and operations teams across ING member organisations to map how societies can adapt to increasingly capable AI systems.
+
+Key goals:
+• Publish a shared societal-adaptation risk map
+• Run cross-organisation tabletop exercises
+• Draft practical guidance for public-sector partners`,
+[PERSON('Dr. Amara Osei','Lead Policy Researcher','amara.osei@gmail.com','amara-osei'),
+ PERSON('Lucas Vermeulen','Governance Analyst','lucas.vermeulen@gmail.com','lvermeulen'),
+ PERSON('Priya Nair','Research Manager','priya.nair@gmail.com','priyanair')]),
+
+  P('i2','ing','Red-Teaming Frontier Models at Scale','Evaluations','Open',G.mint,'4.9','Mar – Sep 2025','London · Remote-friendly',
+`A structured red-teaming programme probing frontier models for dangerous capabilities, deceptive behaviour and alignment failures before deployment.
+
+Key goals:
+• Build a repeatable adversarial-testing pipeline
+• Share sanitised findings across members
+• Contribute results to third-party eval efforts`,
+[PERSON('Jonas Weber','Red Team Lead','jonas.weber@gmail.com','jweber-sec'),
+ PERSON('Mei Tanaka','Adversarial ML Engineer','mei.tanaka@gmail.com','meitanaka'),
+ PERSON('Samuel Idowu','Safety Engineer','samuel.idowu@gmail.com','sidowu'),
+ PERSON('Elena Petrova','Eval Infrastructure','elena.petrova@gmail.com','e-petrova')]),
+
+  P('i3','ing','Circuit-Level Interpretability of Induction Heads','Interpretability','Completed',G.fresh,'4.7','Completed · Dec 2024','Remote',
+`A deep-dive into the circuits underlying in-context learning, reverse-engineering attention heads and publishing open tooling for the interpretability community.
+
+Outcome: three peer-reviewed papers and an open-source circuit-tracing toolkit adopted by 40+ labs.`,
+[PERSON('Dr. Chris Meyer','Principal Scientist','chris.meyer@gmail.com','cmeyer-ai'),
+ PERSON('Aisha Rahman','Research Scientist','aisha.rahman@gmail.com','aisharahman')]),
+
+  P('i4','ing','CyberBench: Secure Code Generation Benchmark','Robustness','Completed',G.teal,'4.8','Completed · Nov 2024','Berlin · Remote',
+`Developed a benchmark measuring whether code-generation models introduce exploitable vulnerabilities, with automated exploit verification.
+
+Outcome: benchmark released publicly; adopted in two frontier-lab pre-deployment eval suites.`,
+[PERSON('Daniel Kovács','Security Lead','daniel.kovacs@gmail.com','dkovacs'),
+ PERSON('Hannah Liu','ML Engineer','hannah.liu@gmail.com','hannahliu'),
+ PERSON('Tomás Silva','Backend Engineer','tomas.silva@gmail.com','tsilva-dev')]),
+
+  P('i5','ing','AI Safety Curriculum for New Researchers','AI Safety','Open',G.mintLt,'4.9','Rolling intake · 2025','Global · Remote',
+`A 12-week technical curriculum taking engineers from ML fundamentals to frontier safety research, with mentorship from ING RND member staff.
+
+Key goals:
+• Run 3 cohorts in 2025
+• Publish all materials under an open licence
+• Place top graduates into member teams`,
+[PERSON('Prof. Laura Bennett','Program Director','laura.bennett@gmail.com','lbennett-edu'),
+ PERSON('Omar Haddad','Curriculum Designer','omar.haddad@gmail.com','omarhaddad'),
+ PERSON('Sofia Rossi','Teaching Fellow','sofia.rossi@gmail.com','sofia-rossi')]),
+
+  P('i6','ing','Multilingual Stress-Testing Suite','Robustness','Open',G.palest,'4.6','Apr – Oct 2025','Remote',
+`Extending safety evaluations beyond English to 30+ languages, surfacing differential failure modes across linguistic and cultural contexts.
+
+Key goals:
+• Ship a multilingual eval harness
+• Publish a cross-lingual red-teaming dataset`,
+[PERSON('Kenji Sato','Research Lead','kenji.sato@gmail.com','ksato-nlp'),
+ PERSON('Nadia Petrov','Computational Linguist','nadia.petrov@gmail.com','nadiapetrov'),
+ PERSON('David Okafor','ML Engineer','david.okafor@gmail.com','dokafor')]),
+
+  /* ---------- GLOBAL ---------- */
+  P('g1','global','Frontier Safety Frameworks: Shared Practices','AI Safety','Open',G.sea,'4.9','Feb – Nov 2025','Global · Remote',
+`Convening safety teams from multiple frontier labs to identify common elements of responsible scaling policies and agree on shared evaluation practices.
+
+Key goals:
+• Draft a common capability-threshold vocabulary
+• Publish a joint practices whitepaper
+• Establish cross-lab incident sharing norms`,
+[PERSON('Dr. Ingrid Solberg','Initiative Lead','ingrid.solberg@gmail.com','isolberg'),
+ PERSON('Marcus Chen','Safety Researcher','marcus.chen@gmail.com','mchen-safe'),
+ PERSON('Fatima Al-Sayed','Policy Liaison','fatima.alsayed@gmail.com','fatima-als')]),
+
+  P('g2','global','Open Evals Library for Catastrophic Risks','Evaluations','Completed',G.mint,'4.8','Completed · Jan 2025','Remote',
+`Built an open-source library of standardised evaluations for biosecurity, cyber-offence and autonomous-replication risks, usable by any lab or auditor.
+
+Outcome: 60+ evals published, 2.1k GitHub stars, integrated into three external audit regimes.`,
+[PERSON('Alex Turner','Maintainer','alex.turner@gmail.com','turnerml'),
+ PERSON('Grace Kim','Research Engineer','grace.kim@gmail.com','gracekim-ai'),
+ PERSON('Ravi Patel','Infrastructure Engineer','ravi.patel@gmail.com','ravipatel-dev')]),
+
+  P('g3','global','Global AI Governance Policy Toolkit','Governance','Open',G.olive,'4.7','Mar – Dec 2025','Brussels · Remote',
+`Producing practical, jurisdiction-aware policy toolkits that help regulators implement frontier-model oversight, including compute thresholds and audit standards.
+
+Key goals:
+• Release toolkit v1 for EU, US and UK contexts
+• Host three multi-stakeholder workshops`,
+[PERSON('Claire Dubois','Lead Author','claire.dubois@gmail.com','cdubois'),
+ PERSON('Henrik Olsen','Legal Researcher','henrik.olsen@gmail.com','henrikolsen'),
+ PERSON('Yuki Mori','Project Coordinator','yuki.mori@gmail.com','yukimori')]),
+
+  P('g4','global','Watermarking & Provenance for Generated Media','Robustness','Completed',G.palest,'4.6','Completed · Oct 2024','Remote',
+`Evaluated the robustness of watermarking schemes for AI-generated content against removal and forgery attacks, and drafted deployment recommendations for platforms.
+
+Outcome: technical report and open attack-suite released; recommendations adopted by two platform partners.`,
+[PERSON('Stefan Brandt','Technical Lead','stefan.brandt@gmail.com','sbrandt'),
+ PERSON('Olivia Grant','Research Scientist','olivia.grant@gmail.com','ogrant')]),
+
+  P('g5','global','Mechanistic Interpretability Fellowship','Interpretability','Open',G.mintLt,'5.0','Jun – Dec 2025','Global · Remote',
+`A funded fellowship pairing early-career researchers with senior mentors to reverse-engineer behaviours in frontier models, culminating in an open research showcase.
+
+Key goals:
+• Support 10 funded fellows
+• Publish all research openly
+• Build a durable mentor network`,
+[PERSON('Dr. Nathan Cole','Fellowship Director','nathan.cole@gmail.com','ncole-interp'),
+ PERSON('Emma Lindqvist','Mentor / Scientist','emma.lindqvist@gmail.com','emmalindq'),
+ PERSON('Arjun Mehta','Program Manager','arjun.mehta@gmail.com','arjunmehta')]),
+
+  P('g6','global','Joint AI Incident Response Network','AI Safety','Open',G.fresh,'4.8','Ongoing since 2025','Global · On-call',
+`Establishing a shared protocol and on-call network for coordinating responses to serious AI incidents across member organisations and governments.
+
+Key goals:
+• Draft joint incident taxonomy & playbooks
+• Run quarterly cross-org response drills`,
+[PERSON('Rosa Delgado','Network Coordinator','rosa.delgado@gmail.com','rdelgado'),
+ PERSON('Peter Novak','Operations Lead','peter.novak@gmail.com','pnovak-ops'),
+ PERSON('Leila Hassan','Communications Lead','leila.hassan@gmail.com','leilahassan')])
+];
+
+const SECTORS = ['All','AI Safety','Interpretability','Governance','Robustness','Evaluations'];
+const PALETTE = ['#E7F8EE','#D3F2E0','#BDEBD2','#A6E6C4','#8FDDB4','#DFF2D0','#CBEBC0','#C4EEDF'];
+let colorIdx = 0;
+const state = {q:'', sector:'All', status:'All'};
+
+/* ================= HELPERS ================= */
+const $ = s => document.querySelector(s);
+const AV_COLORS = ['#0E7C5B','#0A5F45','#1E9E6E','#35B47F','#0B6B4E','#127A56','#2FA36B'];
+function avatarColor(name){let h=0;for(const c of name)h=(h*31+c.charCodeAt(0))%997;return AV_COLORS[h%AV_COLORS.length];}
+function initials(name){return name.split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();}
+function ghURL(u){return 'https://github.com/'+String(u).replace(/^https?:\/\/(www\.)?github\.com\//i,'').replace(/\/$/,'');}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._tm);t._tm=setTimeout(()=>t.classList.remove('show'),3200);}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function hexToRgba(hex,a){const n=parseInt(hex.replace('#',''),16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;}
+function updateOpenCount(){const open=projects.filter(p=>p.status==='Open').length;$('#openNow').textContent=open;}
+
+/* ================= RENDER ================= */
+function statusPill(p){
+  return p.status==='Open'
+    ? `<span class="pill"><i class="dot"></i>Open</span>`
+    : `<span class="pill st-done">${ICONS.check}Completed</span>`;
+}
+function avatarsStack(p){
+  return p.participants.slice(0,3).map(pt=>`<span class="avatar" style="background:${avatarColor(pt.name)}" title="${esc(pt.name)}">${initials(pt.name)}</span>`).join('')
+    + (p.participants.length>3?`<span class="avatar avatar-more">+${p.participants.length-3}</span>`:'');
+}
+function cardHTML(p,i){
+  const top = parseFloat(p.rating) >= 4.9 ? `<span class="pill pill-top">${ICONS.medal}Top rated</span>` : '';
+  return `<article class="card" tabindex="0" role="button" data-id="${p.id}" style="background:${p.color};--gl:${hexToRgba(p.color,.5)}" aria-label="Open project: ${esc(p.title)}">
+    <div class="card-top">
+      <span class="pill">${ICONS[SECTOR_ICON[p.sector]]}${esc(p.sector)}</span>
+      <span style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">${statusPill(p)}${top}</span>
+    </div>
+    <h3 class="card-title">${esc(p.title)}</h3>
+    <div class="card-bottom">
+      <div class="avatars">${avatarsStack(p)}</div>
+      <span class="pcount">${p.participants.length} participant${p.participants.length===1?'':'s'}</span>
+      <span class="spacer"></span>
+      <span class="pill pill-rating">${ICONS.star}${esc(p.rating)}</span>
+      <span class="card-arrow">${ICONS.arrow}</span>
+    </div>
+  </article>`;
+}
+function getFiltered(section){
+  return projects.filter(p=>p.section===section
+    && (state.sector==='All'||p.sector===state.sector)
+    && (state.status==='All'||p.status===state.status)
+    && (!state.q || (p.title+' '+p.desc+' '+p.sector).toLowerCase().includes(state.q)));
+}
+function render(){
+  [['ing','#grid-ing','#empty-ing','#count-ing'],['global','#grid-global','#empty-global','#count-global']].forEach(([sec,grid,empty,count])=>{
+    const list=getFiltered(sec);
+    $(grid).innerHTML=list.map(cardHTML).join('');
+    $(empty).style.display=list.length?'none':'block';
+    $(count).textContent=`${list.length} project${list.length===1?'':'s'}`;
+  });
+}
+
+/* sector chips */
+ $('#sectorChips').innerHTML = SECTORS.map(s=>
+  `<button class="chip ${s==='All'?'active':''}" data-sector="${s}"><span class="ic">${s==='All'?ICONS.grid:ICONS[SECTOR_ICON[s]]}</span>${s}</button>`).join('');
+ $('#sectorChips').addEventListener('click',e=>{
+  const b=e.target.closest('.chip'); if(!b)return;
+  state.sector=b.dataset.sector;
+  document.querySelectorAll('#sectorChips .chip').forEach(c=>c.classList.toggle('active',c===b));
+  render();
+});
+ $('#statusSeg').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  state.status=b.dataset.status;
+  document.querySelectorAll('#statusSeg button').forEach(x=>x.classList.toggle('active',x===b));
+  render();
+});
+ $('#searchInput').addEventListener('input',e=>{state.q=e.target.value.trim().toLowerCase();render();});
+
+/* ================= PROJECT MODAL ================= */
+function openProject(id){
+  const p=projects.find(x=>x.id===id); if(!p)return;
+  $('#pmBanner').style.background=p.color;
+  $('#pmTitle').textContent=p.title;
+  $('#pmPills').innerHTML=`<span class="pill">${ICONS[SECTOR_ICON[p.sector]]}${esc(p.sector)}</span>${statusPill(p)}<span class="pill pill-rating">${ICONS.star}${esc(p.rating)}</span>`;
+  $('#pmMeta').innerHTML=`<span class="meta-chip">${ICONS.calendar}${esc(p.timeline||'Timeline TBC')}</span>
+    <span class="meta-chip">${ICONS.pin}${esc(p.location||'Location TBC')}</span>
+    <span class="meta-chip">${ICONS.users}${p.participants.length} participants</span>`;
+  $('#pmDesc').textContent=p.desc;
+  $('#pmTeamLabel').textContent=p.status==='Open'?'Participants & contact info':'Project team & contact info';
+  $('#pmParticipants').innerHTML=p.participants.map(pt=>{
+    const links=[
+      pt.email?`<a class="chip-link" href="mailto:${esc(pt.email)}">${ICONS.mail}Gmail</a>`:'',
+      pt.github?`<a class="chip-link" href="${ghURL(pt.github)}" target="_blank" rel="noopener">${ICONS.github}GitHub</a>`:''
+    ].join('');
+    return `<li class="person">
+      <span class="avatar big" style="background:${avatarColor(pt.name)}">${initials(pt.name)}</span>
+      <div class="person-info"><strong>${esc(pt.name)}</strong><span>${esc(pt.role||'Contributor')}</span></div>
+      <div class="person-links">${links}</div></li>`;
+  }).join('');
+  const first=p.participants.find(pt=>pt.email);
+  $('#pmContact').style.display=first?'inline-flex':'none';
+  if(first){
+    $('#pmContact').href=`mailto:${esc(first.email)}?subject=${encodeURIComponent('Interest in project: '+p.title+' (via ING RND)')}`;
+    $('#pmContactLabel').textContent=p.status==='Open'?'Express interest via email':'Contact the project team';
+  }
+  openModal('#projectModal');
+}
+
+['#grid-ing','#grid-global'].forEach(g=>{
+  $(g).addEventListener('click',e=>{const c=e.target.closest('.card');if(c)openProject(c.dataset.id);});
+  $(g).addEventListener('keydown',e=>{
+    const c=e.target.closest('.card');
+    if(c&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openProject(c.dataset.id);}
+  });
+});
+
+/* ================= REGISTER ================= */
+function addPersonRow(prefill={}){
+  const row=document.createElement('div');
+  row.className='person-row';
+  row.innerHTML=`<input data-f="name" type="text" placeholder="Full name *" value="${esc(prefill.name||'')}">
+    <input data-f="email" type="text" placeholder="Gmail address" value="${esc(prefill.email||'')}">
+    <input data-f="github" type="text" placeholder="GitHub username" value="${esc(prefill.github||'')}">
+    <button type="button" class="remove-btn" title="Remove participant" onclick="this.parentElement.remove()">×</button>`;
+  $('#rf-people').appendChild(row);
+}
+function resetRegisterForm(){
+  $('#registerForm').reset();
+  $('#rf-people').innerHTML='';
+  addPersonRow();
+  $('#rf-error').classList.remove('show');
+}
+function openRegister(){resetRegisterForm();openModal('#registerModal');}
+
+ $('#registerForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const title=$('#rf-title').value.trim();
+  const desc=$('#rf-desc').value.trim();
+  const people=[...document.querySelectorAll('#rf-people .person-row')]
+    .map(r=>({name:r.querySelector('[data-f=name]').value.trim(),
+              email:r.querySelector('[data-f=email]').value.trim(),
+              github:r.querySelector('[data-f=github]').value.trim()}))
+    .filter(p=>p.name);
+  const err=$('#rf-error');
+  if(!title||!desc||!people.length){
+    err.textContent='Please fill in the project title, description and at least one participant name.';
+    err.classList.add('show');return;
+  }
+  err.classList.remove('show');
+  const p={
+    id:'u'+Date.now(),
+    section:$('#rf-section').value,
+    title,sector:$('#rf-sector').value,status:$('#rf-status').value,
+    color:PALETTE[colorIdx++%PALETTE.length],
+    rating:$('#rf-rating').value.trim()||'New',
+    timeline:$('#rf-timeline').value.trim()||'TBC',
+    location:$('#rf-location').value.trim()||'TBC',
+    desc,participants:people
+  };
+  projects.unshift(p);
+  state.q='';state.sector='All';state.status='All';
+  $('#searchInput').value='';
+  document.querySelectorAll('#sectorChips .chip').forEach(c=>c.classList.toggle('active',c.dataset.sector==='All'));
+  document.querySelectorAll('#statusSeg button').forEach(b=>b.classList.toggle('active',b.dataset.status==='All'));
+  render();updateOpenCount();
+  closeModals();
+  const sectionName=p.section==='ing'?'ING Opportunities':'Global Opportunities';
+  toast(`✅ “${p.title}” registered — now live in ${sectionName}.`);
+  document.getElementById(p.section==='ing'?'section-ing':'section-global').scrollIntoView({behavior:'smooth'});
+});
+
+/* ================= MODAL PLUMBING ================= */
+function openModal(sel){$(sel).classList.add('show');document.body.classList.add('modal-open');
+  const f=$(sel).querySelector('input,button'); if(f)setTimeout(()=>f.focus(),120);}
+function closeModals(){document.querySelectorAll('.modal-backdrop.show').forEach(m=>m.classList.remove('show'));document.body.classList.remove('modal-open');}
+document.querySelectorAll('.modal-backdrop').forEach(b=>{
+  b.addEventListener('click',e=>{if(e.target===b||e.target.closest('[data-close]'))closeModals();});
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModals();});
+
+/* ================= COUNT-UP STATS ================= */
+function countUp(el){
+  const target=+el.dataset.count, dur=1100, t0=performance.now();
+  (function tick(t){
+    const k=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-k,3);
+    el.textContent=Math.round(target*e);
+    if(k<1)requestAnimationFrame(tick);
+  })(t0);
+}
+document.querySelectorAll('[data-count]').forEach(el=>{
+  new IntersectionObserver((es,io)=>{if(es[0].isIntersecting){countUp(el);io.disconnect();}},{threshold:.4}).observe(el);
+});
+
+/* init */
+addPersonRow();
+render();
+updateOpenCount();
+</script>
+</body>
 </html>
