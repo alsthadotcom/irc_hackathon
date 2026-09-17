@@ -498,17 +498,11 @@ Mentors should have clear response options.
 
 ### Option 2 — Reject
 
-"This project is not appropriate for my expertise."
+"This project is not appropriate for my expertise, or I cannot currently commit time or any xyz reason"
 
 → System records rejection and moves to another mentor.
 
-### Option 3 — Interested but unavailable
-
-"The project is relevant, but I cannot currently commit time."
-
-→ System searches for another suitable mentor.
-
-### Option 4 — Request More Information
+### Option 3 — Request More Information
 
 Mentor requests clarification before making a decision.
 
@@ -539,8 +533,6 @@ Move to next mentor
 ```
 
 The exact timing should be configurable by administrators.
-
-This makes the system operational rather than merely informational.
 
 ---
 
@@ -614,6 +606,7 @@ Institutional Archive
 ```
 
 This lifecycle is one of the central purposes of the platform.
+To confirm the project completion, the mentor should manually update the project status rather than the student side.
 
 ---
 
