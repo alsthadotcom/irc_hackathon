@@ -1,3 +1,1414 @@
-IRC Hackathon
--Manik Shah Thakuri
--Alson Shrestha
+# IRC Research & Opportunity Platform
+
+## 1. Core Vision
+
+Build a **single centralized research and innovation platform for Islington College** that serves two major purposes:
+
+### Branch A: What Is Happening Inside Islington College
+
+Create a structured, searchable system that documents:
+
+* Completed research projects
+* Ongoing research projects
+* Completed technical projects
+* Ongoing technical/innovation projects
+* Research papers
+* Student-led projects
+* Faculty-led research
+* Opportunities to collaborate on ongoing projects
+
+The goal is not simply to create a project-listing website.
+
+The goal is to create an **institutional research/project discovery and validation system** where:
+
+> A project enters the system → gets structured information → goes through validation/mentor assignment → becomes publicly discoverable within the college → students can discover and potentially collaborate on it → the project eventually becomes part of the college's permanent research/project record.
+
+### Branch B: Opportunities Outside Islington College
+
+Create a centralized **Opportunity Discovery Dashboard** that continuously gathers relevant opportunities from external sources around the world, including:
+
+* Research grants
+* Research competitions
+* Research conferences
+* Calls for papers
+* Fellowships
+* Innovation competitions
+* Student competitions
+* Hackathons
+* Research programs
+* Other relevant academic/research opportunities
+
+Instead of students manually checking dozens of websites, the platform acts as a **single discovery layer**.
+
+The system periodically collects information from configured external sources, processes and structures the information, determines relevance, and presents the opportunities in one searchable dashboard.
+
+---
+
+# 2. High-Level Architecture
+
+The platform has one authentication layer and two primary branches:
+
+```text
+                    IRC RESEARCH PLATFORM
+                            │
+                    College Authentication
+                            │
+                     Islington Email Login
+                            │
+                ┌───────────┴───────────┐
+                │                       │
+                ▼                       ▼
+        ISLINGTON RESEARCH       GLOBAL OPPORTUNITIES
+          & PROJECTS                 DASHBOARD
+                │                       │
+        ┌───────┴───────┐       ┌───────┴────────┐
+        │               │       │                │
+     Completed       Ongoing   Grants       Competitions
+     Projects       Projects   Conferences  Fellowships
+        │               │       Hackathons   Calls for Papers
+        │               │       Research Programs
+        │               │
+        │          Mentor Validation
+        │               │
+        │          Collaboration
+        │          Opportunities
+        │
+        ▼
+   Institutional
+   Research Archive
+```
+
+The two branches should share the same platform, authentication, database, search, user profiles, and administrative infrastructure.
+
+---
+
+# 3. Authentication
+
+The platform is intended primarily for the Islington College ecosystem.
+
+Users should authenticate using their **official college email credentials**.
+
+### Basic requirement
+
+A user must:
+
+1. Open the platform.
+2. Authenticate using their college account.
+3. Be verified as an authorized college user.
+4. Access the platform according to their role.
+
+Possible roles:
+
+* Student
+* Faculty/Mentor
+* Researcher
+* Administrator
+* IRC/R&I Administrator
+
+The system should support role-based permissions.
+
+---
+
+# 4. Branch A — Islington Research & Project Repository
+
+This branch answers:
+
+> "What research and projects are currently happening or have already happened at Islington College?"
+
+It should contain two major states:
+
+### A. Completed
+
+Projects that have already been completed.
+
+### B. Ongoing
+
+Projects that are currently being developed or researched.
+
+The distinction should be obvious in the interface.
+
+---
+
+# 5. Completed Projects
+
+Completed projects are primarily an **institutional knowledge and showcase repository**.
+
+Each completed project should have a detailed project page.
+
+## Project Information
+
+A project record should be capable of containing:
+
+### Basic Information
+
+* Project title
+* Short description
+* Full description
+* Project category
+* Research area
+* Technology/domain
+* Status
+* Start date
+* Completion date
+* Academic year
+* Department/program
+* Faculty/mentor
+* Student/team members
+
+### Problem Definition
+
+The project page should clearly explain:
+
+* Problem statement
+* Background/context
+* Why the problem matters
+* Target users/community
+* Existing problem or gap
+* Research question, if applicable
+* Objectives
+
+### Methodology
+
+Where applicable:
+
+* Research methodology
+* Technical methodology
+* Data collection method
+* Dataset information
+* Tools and technologies
+* Experimental procedure
+* Development methodology
+
+### Outcome
+
+* What was built/researched?
+* Key findings
+* Results
+* Performance
+* Impact
+* Limitations
+* Future work
+
+### Team
+
+Display:
+
+* Team members
+* Their roles
+* Faculty mentor
+* Research supervisor
+
+Users should be able to click on a member and see their profile.
+
+### References and Outputs
+
+Allow links to:
+
+* Research paper
+* GitHub repository
+* Project website
+* Demo
+* Dataset
+* Publication
+* Presentation
+* Documentation
+* Video
+* Other relevant resources
+
+The completed project should become a permanent institutional record.
+
+---
+
+# 6. Ongoing Projects
+
+Ongoing projects are different from completed projects.
+
+Their primary purpose is:
+
+1. Showcase what is currently happening.
+2. Help students discover research/project opportunities.
+3. Help researchers find potential collaborators.
+4. Help faculty discover projects requiring mentorship.
+5. Increase participation in research.
+
+An ongoing project page should therefore prominently display:
+
+* Project title
+* Problem statement
+* Research/project description
+* Current stage
+* Objectives
+* Team members
+* Faculty/mentor
+* Research area
+* Required skills
+* Technologies
+* Expected outcomes
+* Current progress
+* Number of available positions
+* Roles needed
+* Whether students can join
+* Whether new co-authors are being accepted
+* Application/join mechanism
+
+For example:
+
+```text
+Project: Multilingual Nepali Language Model
+
+Status: Ongoing
+
+Research Areas:
+NLP | LLM | Nepali Language | Machine Learning
+
+Current Team:
+4 members
+
+Faculty Mentor:
+Dr. XXXXX
+
+Looking For:
+2 NLP Researchers
+1 Data Engineer
+1 Research Assistant
+
+Required Skills:
+Python
+NLP
+Transformers
+PyTorch
+
+Accepting Collaborators:
+YES
+```
+
+A student should be able to discover this project and express interest.
+
+---
+
+# 7. Collaboration Mechanism
+
+The platform should allow students to discover ongoing projects where additional contributors are wanted.
+
+A student should be able to click:
+
+**"Join / Express Interest"**
+
+The system should collect:
+
+* Student name
+* College email
+* Program
+* Relevant skills
+* Why they want to join
+* Relevant previous experience
+* Optional portfolio/GitHub
+* Desired role
+
+The project owner/mentor can then review applications.
+
+Possible application states:
+
+```text
+Pending
+Accepted
+Rejected
+Waitlisted
+```
+
+This transforms the repository from a passive database into a **research collaboration marketplace within the college**.
+
+---
+
+# 8. Project Submission Pipeline
+
+The most important part of Branch A is that projects should **not simply appear in the system immediately after a student submits them**.
+
+There should be a formal workflow.
+
+## Step 1 — Student/Researcher Submission
+
+The project creator submits a structured form.
+
+Required information should include:
+
+### Project Identity
+
+* Project title
+* Project type
+* Research/project category
+* Research domain
+
+### Problem
+
+* Problem statement
+* Background
+* Why the problem matters
+
+### Proposed Work
+
+* What are you trying to build/research?
+* Objectives
+* Expected outcomes
+* Methodology/approach
+
+### Team
+
+* Team members
+* Team roles
+* Program/year
+* Faculty information, if already available
+
+### Timeline
+
+* Expected start date
+* Expected completion date
+* Current stage
+
+### Skills
+
+* Required technical skills
+* Research skills
+* Other requirements
+
+### Collaboration
+
+* Are additional students needed?
+* What roles are available?
+* How many students are required?
+* Are co-authors being accepted?
+
+---
+
+# 9. Project Validation
+
+After submission, the project enters a validation pipeline.
+
+Example:
+
+```text
+DRAFT
+  ↓
+SUBMITTED
+  ↓
+VALIDATION
+  ↓
+MENTOR MATCHING
+  ↓
+MENTOR REVIEW
+  ↓
+APPROVED / REJECTED
+  ↓
+PUBLISHED
+```
+
+The system should never assume that every submitted project is automatically valid simply because the submitter is an Islington student.
+
+The purpose of validation is to maintain the credibility and quality of the institutional repository.
+
+---
+
+# 10. Automated Mentor Assignment
+
+The platform should maintain a database of faculty members/mentors.
+
+Each mentor profile can contain:
+
+* Name
+* Faculty email
+* Department
+* Expertise
+* Research interests
+* Technologies
+* Areas they supervise
+* Current mentorship load
+* Availability
+
+When a project is submitted, the system should attempt to identify appropriate mentors.
+
+Matching can initially be simple and deterministic.
+
+For example:
+
+```text
+Project:
+Computer Vision + Medical Imaging
+
+Required expertise:
+Computer Vision
+Deep Learning
+Medical AI
+
+Potential mentors:
+Mentor A → Computer Vision
+Mentor B → Deep Learning
+Mentor C → Medical AI
+```
+
+Later, this can become an AI-assisted semantic matching system.
+
+---
+
+# 11. Mentor Notification Workflow
+
+Once potential mentors are identified, the platform should automatically send them an email.
+
+Example workflow:
+
+```text
+Project submitted
+       ↓
+System identifies suitable mentors
+       ↓
+Email sent to Mentor A
+       ↓
+Mentor responds
+       ↓
+YES → mentor assigned
+NO → next mentor
+```
+
+The system can alternatively support simultaneous notification:
+
+```text
+Project submitted
+       ↓
+Identify 5 relevant mentors
+       ↓
+Send request to all 5
+       ↓
+Interested mentors respond
+       ↓
+Administrator/project owner selects mentor
+```
+
+The architecture should support both approaches.
+
+---
+
+# 12. Mentor Responses
+
+Mentors should have clear response options.
+
+### Option 1 — Accept
+
+"I am willing to mentor this project."
+
+→ Project proceeds.
+
+### Option 2 — Reject
+
+"This project is not appropriate for my expertise."
+
+→ System records rejection and moves to another mentor.
+
+### Option 3 — Interested but unavailable
+
+"The project is relevant, but I cannot currently commit time."
+
+→ System searches for another suitable mentor.
+
+### Option 4 — Request More Information
+
+Mentor requests clarification before making a decision.
+
+The project remains in review.
+
+---
+
+# 13. Automatic Scheduling / Escalation
+
+The system should avoid projects becoming permanently stuck.
+
+Example:
+
+```text
+Mentor request sent
+       ↓
+Wait 48 hours
+       ↓
+No response?
+       ↓
+Reminder
+       ↓
+Wait additional period
+       ↓
+Still no response?
+       ↓
+Move to next mentor
+```
+
+The exact timing should be configurable by administrators.
+
+This makes the system operational rather than merely informational.
+
+---
+
+# 14. Project Approval
+
+Once a suitable mentor accepts the project, the project can move to:
+
+**APPROVED**
+
+The administrator or authorized mentor can then publish it.
+
+Published projects become visible in the internal project repository.
+
+The platform should retain the project's lifecycle:
+
+```text
+Draft
+Submitted
+Under Review
+Mentor Matching
+Mentor Review
+Approved
+Published
+Ongoing
+Completed
+Archived
+```
+
+---
+
+# 15. Completed Project Transition
+
+An ongoing project should eventually transition to:
+
+**COMPLETED**
+
+The system should allow the team to update:
+
+* Final problem statement
+* Final methodology
+* Final results
+* Findings
+* Deliverables
+* Paper
+* GitHub
+* Demo
+* Dataset
+* Presentation
+* Publication
+* Final team
+* Completion date
+
+This creates a continuous lifecycle:
+
+```text
+Idea
+ ↓
+Submission
+ ↓
+Validation
+ ↓
+Mentorship
+ ↓
+Ongoing Project
+ ↓
+Collaboration
+ ↓
+Completion
+ ↓
+Institutional Archive
+```
+
+This lifecycle is one of the central purposes of the platform.
+
+---
+
+# 16. Search and Discovery — Branch A
+
+Users should be able to discover projects using:
+
+* Search
+* Research area
+* Technology
+* Project status
+* Department
+* Faculty
+* Academic year
+* Project type
+* Skills required
+* Collaboration availability
+
+Example:
+
+```text
+Search: NLP
+
+Filters:
+Status: Ongoing
+Domain: Artificial Intelligence
+Accepting collaborators: Yes
+```
+
+The result should show relevant projects.
+
+---
+
+# 17. Branch B — Global Opportunity Dashboard
+
+The second major component is an **external opportunity aggregation system**.
+
+The objective is:
+
+> Automatically discover relevant research and innovation opportunities from multiple external sources and present them through one centralized dashboard.
+
+Instead of:
+
+```text
+Student
+ ↓
+Google
+ ↓
+Website 1
+ ↓
+Website 2
+ ↓
+Website 3
+ ↓
+Website 4
+ ↓
+Website 5
+```
+
+the system becomes:
+
+```text
+External Sources
+     ↓
+Data Collection Pipeline
+     ↓
+Extraction
+     ↓
+Normalization
+     ↓
+Deduplication
+     ↓
+Classification
+     ↓
+Relevance Filtering
+     ↓
+Opportunity Database
+     ↓
+IRC Dashboard
+```
+
+---
+
+# 18. Opportunity Sources
+
+The system should support multiple types of data sources.
+
+Potential source mechanisms:
+
+* APIs
+* RSS feeds
+* Public webpages
+* Structured websites
+* Search endpoints
+* Government/public datasets
+
+The system should use the appropriate extraction method for each source.
+
+Do not hard-code the entire system around one website.
+
+Instead, create a **source configuration system**.
+
+---
+
+# 19. Source Configuration
+
+Administrators should be able to add a source.
+
+A source record could contain:
+
+```text
+Source Name
+Source URL
+Source Type
+Extraction Method
+Update Frequency
+Active/Inactive
+Parser Configuration
+Category
+```
+
+Example:
+
+```text
+Source:
+Example Research Grants
+
+URL:
+example.org/grants
+
+Type:
+Web
+
+Method:
+HTML Parser
+
+Frequency:
+Every 24 hours
+
+Status:
+Active
+```
+
+This allows the platform to grow from 5 sources to 50 or 500 sources without redesigning the entire architecture.
+
+---
+
+# 20. Data Pipeline
+
+Each source should go through a standard pipeline.
+
+```text
+SOURCE
+  ↓
+FETCH
+  ↓
+PARSE
+  ↓
+EXTRACT
+  ↓
+NORMALIZE
+  ↓
+VALIDATE
+  ↓
+DEDUPLICATE
+  ↓
+CLASSIFY
+  ↓
+RELEVANCE SCORE
+  ↓
+STORE
+  ↓
+DISPLAY
+```
+
+---
+
+# 21. Opportunity Data Model
+
+Every opportunity should be normalized into a common structure.
+
+Possible fields:
+
+### Basic
+
+* Title
+* Description
+* Organization
+* Opportunity type
+* Category
+* Country
+* Location
+* Online/Physical
+
+### Dates
+
+* Published date
+* Application deadline
+* Event date
+* Start date
+* End date
+
+### Eligibility
+
+* Student eligibility
+* Academic level
+* Age requirements
+* Country eligibility
+* Institution requirements
+* Team/individual requirement
+
+### Financial
+
+* Prize
+* Grant amount
+* Funding amount
+* Participation cost
+* Application fee
+
+### Research
+
+* Research area
+* Topics
+* Required skills
+* Relevant disciplines
+
+### Links
+
+* Original source
+* Application link
+* Official website
+
+### System Metadata
+
+* Source
+* Last updated
+* Date collected
+* Data confidence
+* Duplicate identifier
+
+---
+
+# 22. Opportunity Categories
+
+The dashboard should support clear categories such as:
+
+```text
+Research Grants
+Research Competitions
+Research Conferences
+Call for Papers
+Fellowships
+Scholarships
+Hackathons
+Innovation Competitions
+Student Competitions
+Research Programs
+Internships
+Other
+```
+
+The categories should be configurable rather than permanently hard-coded.
+
+---
+
+# 23. Relevance Detection
+
+The system should not simply scrape everything.
+
+It should determine whether an opportunity is relevant to the target audience.
+
+Potential relevance dimensions:
+
+### Student Relevance
+
+Is this available to university/college students?
+
+### Geographic Relevance
+
+Is Nepal eligible?
+
+### Academic Relevance
+
+Is it related to:
+
+* AI
+* Computer Science
+* Engineering
+* Research
+* Innovation
+* Entrepreneurship
+* Data Science
+* NLP
+* Robotics
+* etc.?
+
+### Opportunity Relevance
+
+Is it actually an opportunity rather than generic informational content?
+
+The system can initially use rule-based filtering.
+
+Later, it can use embeddings or an LLM classifier.
+
+---
+
+# 24. Opportunity Classification
+
+A future AI classification pipeline could produce:
+
+```text
+Opportunity
+     ↓
+LLM / Embedding Classifier
+     ↓
+Category
+     ↓
+Relevant domains
+     ↓
+Eligibility
+     ↓
+Nepal eligibility
+     ↓
+Student relevance
+     ↓
+Relevance score
+```
+
+For the hackathon MVP, this should remain lightweight.
+
+Do not spend the majority of the 12-hour build implementing sophisticated AI classification if a reliable rule-based pipeline can demonstrate the concept.
+
+---
+
+# 25. Deduplication
+
+The same opportunity may appear on multiple sources.
+
+The system should attempt to detect duplicates.
+
+Potential matching signals:
+
+* Same URL
+* Same title
+* Same organization
+* Same deadline
+* Semantic similarity
+
+Example:
+
+```text
+Source A:
+"Global AI Research Competition 2026"
+
+Source B:
+"2026 Global Artificial Intelligence Research Challenge"
+```
+
+The system should attempt to recognize that these may represent the same opportunity.
+
+One canonical opportunity should ideally be displayed.
+
+---
+
+# 26. Update Frequency
+
+The system should periodically fetch each configured source.
+
+For the MVP:
+
+**Default: once every 24 hours.**
+
+The architecture should allow different frequencies later:
+
+```text
+Every 1 hour
+Every 6 hours
+Every 12 hours
+Every 24 hours
+Every week
+```
+
+The system should store:
+
+* Last successful fetch
+* Last failed fetch
+* Number of records fetched
+* Number of new records
+* Number of updated records
+* Number of duplicates
+* Error information
+
+This creates observability for the pipeline.
+
+---
+
+# 27. Opportunity Dashboard
+
+The dashboard should make discovery extremely fast.
+
+A user should immediately see:
+
+```text
+GLOBAL OPPORTUNITIES
+
+[Search opportunities...]
+
+Filters:
+Research | Grant | Competition | Conference | Fellowship
+
+Relevant to:
+AI | NLP | Research | Engineering
+
+Eligibility:
+Nepal | Students
+
+Deadline:
+This week | This month | Later
+```
+
+Each opportunity card should show:
+
+```text
+Opportunity Title
+
+Organization
+
+Category
+
+Deadline
+
+Eligibility
+
+Location
+
+Prize/Funding
+
+Relevant Areas
+
+[View Opportunity]
+```
+
+The "View Opportunity" button should ultimately take the user to the original official opportunity/source.
+
+---
+
+# 28. Deadline Awareness
+
+Deadlines should be highly visible.
+
+For example:
+
+```text
+Deadline:
+3 days remaining
+```
+
+or:
+
+```text
+Deadline:
+October 14, 2026
+```
+
+Users should be able to filter:
+
+* Closing today
+* Closing this week
+* Closing this month
+* Future opportunities
+* Expired
+
+Expired opportunities should generally not appear in the main active feed.
+
+---
+
+# 29. Unified Platform Experience
+
+Although there are two branches, users should feel like they are using one platform.
+
+Example navigation:
+
+```text
+IRC Research Platform
+
+Dashboard
+│
+├── Islington Research
+│   ├── Ongoing Projects
+│   ├── Completed Projects
+│   ├── Find Collaborators
+│   └── Submit Project
+│
+├── Opportunities
+│   ├── Grants
+│   ├── Competitions
+│   ├── Conferences
+│   ├── Fellowships
+│   └── All Opportunities
+│
+├── My Activity
+│
+└── Admin
+```
+
+---
+
+# 30. User Dashboard
+
+Each authenticated user should eventually have a personal dashboard.
+
+For students:
+
+```text
+My Projects
+Projects I Joined
+Collaboration Applications
+Saved Opportunities
+Upcoming Deadlines
+```
+
+For faculty:
+
+```text
+Projects I'm Mentoring
+Mentorship Requests
+Projects in Review
+```
+
+For administrators:
+
+```text
+Pending Projects
+Mentor Requests
+Active Projects
+Completed Projects
+Opportunity Pipeline
+Source Health
+```
+
+---
+
+# 31. Administrative Dashboard
+
+Administrators should be able to see the entire system.
+
+### Project management
+
+* Pending submissions
+* Projects requiring validation
+* Mentor assignment
+* Approved projects
+* Rejected projects
+* Ongoing projects
+* Completed projects
+
+### Mentor management
+
+* Faculty members
+* Expertise
+* Current mentorship load
+* Availability
+* Requests
+* Responses
+
+### Opportunity pipeline
+
+* Sources
+* Source health
+* Last fetch
+* Number of opportunities
+* Failed sources
+* Duplicate records
+
+---
+
+# 32. Database Concept
+
+A relational database such as PostgreSQL/Supabase can contain tables approximately like:
+
+```text
+users
+profiles
+roles
+projects
+project_members
+project_applications
+project_status_history
+mentors
+mentor_expertise
+mentor_requests
+mentor_responses
+
+opportunities
+opportunity_categories
+opportunity_sources
+opportunity_tags
+opportunity_eligibility
+
+source_fetch_logs
+saved_opportunities
+notifications
+```
+
+The exact implementation can change depending on the technology stack.
+
+---
+
+# 33. Notifications
+
+The system should eventually support:
+
+### Email
+
+* Project submitted
+* Project approved
+* Mentor request
+* Mentor response
+* Collaboration application
+* Opportunity deadline reminder
+
+### In-app
+
+* New collaboration request
+* Project status change
+* New relevant opportunity
+* Upcoming deadline
+
+Email automation is especially important for the mentor-validation workflow.
+
+---
+
+# 34. MVP Priority for the 12-Hour Hackathon
+
+The goal of the first 12 hours is **not to build the entire final platform**.
+
+The goal is to build a convincing functional vertical slice.
+
+Prioritize:
+
+### Priority 1 — Authentication
+
+College user login or a realistic authentication prototype.
+
+### Priority 2 — Project Repository
+
+Create:
+
+* Ongoing projects
+* Completed projects
+* Project detail page
+
+### Priority 3 — Project Submission
+
+Create the structured project submission form.
+
+### Priority 4 — Mentor Workflow
+
+Demonstrate:
+
+```text
+Submit project
+→ identify mentor
+→ send mentor request
+→ mentor accepts/rejects
+→ project status changes
+```
+
+### Priority 5 — Opportunity Dashboard
+
+Connect a small number of real external sources.
+
+Demonstrate:
+
+```text
+Fetch
+→ extract
+→ normalize
+→ store
+→ display
+```
+
+### Priority 6 — Search and Filtering
+
+Allow users to quickly find projects and opportunities.
+
+---
+
+# 35. What NOT to Overbuild During the MVP
+
+Do not spend the initial 12 hours building:
+
+* A sophisticated recommendation engine
+* Complex AI agents
+* Hundreds of scrapers
+* Perfect semantic deduplication
+* Complex notification infrastructure
+* Advanced analytics
+* Native mobile applications
+* Overly complex permissions
+
+The architecture should **allow these later**, but the MVP should prove the core workflow.
+
+---
+
+# 36. The Core Demonstration
+
+The strongest demonstration of the platform should show two complete journeys.
+
+## Journey A — Internal Research
+
+```text
+Student submits project
+        ↓
+System validates information
+        ↓
+System identifies suitable mentor
+        ↓
+Mentor receives request
+        ↓
+Mentor accepts
+        ↓
+Project becomes approved
+        ↓
+Project appears under Ongoing Research
+        ↓
+Another student discovers it
+        ↓
+Student applies to collaborate
+        ↓
+Project gains another contributor
+        ↓
+Project eventually becomes Completed
+        ↓
+Final research/project record remains archived
+```
+
+## Journey B — External Opportunity
+
+```text
+External websites
+        ↓
+Automated source collector
+        ↓
+Extract opportunity
+        ↓
+Normalize data
+        ↓
+Classify
+        ↓
+Remove duplicates
+        ↓
+Store
+        ↓
+Display on IRC dashboard
+        ↓
+Student searches/filter opportunities
+        ↓
+Student discovers relevant opportunity
+        ↓
+Student visits official application
+```
+
+Together, these two journeys demonstrate the fundamental value of the platform.
+
+---
+
+# 37. Long-Term Vision
+
+The final system should become more than a repository.
+
+It should become the **research infrastructure layer for Islington College**.
+
+The long-term system should enable:
+
+```text
+DISCOVER
+    ↓
+SUBMIT
+    ↓
+VALIDATE
+    ↓
+MENTOR
+    ↓
+COLLABORATE
+    ↓
+RESEARCH / BUILD
+    ↓
+PUBLISH
+    ↓
+ARCHIVE
+```
+
+while simultaneously:
+
+```text
+DISCOVER EXTERNAL OPPORT
+```
